@@ -83,7 +83,7 @@ defmodule HTTPotion.Base do
 
       def is_redirect(response) do
         status_code = process_status_code(elem(response, 1))
-        status_code > 300 && status_code < 400
+        status_code > 300 && status_code < 400 && status_code != 304
       end
 
       def redirect_method(response, method) do
@@ -197,7 +197,7 @@ defmodule HTTPotion.Base do
       def transformer(target, method, url, options) do
         receive do
           { :ibrowse_async_headers, id, status_code, headers } ->
-            if(process_status_code(status_code) in [302, 304]) do
+            if(process_status_code(status_code) in [302]) do
               location = process_response_headers(headers)[:Location]
               request(method, normalize_location(location, url), options)
             else
